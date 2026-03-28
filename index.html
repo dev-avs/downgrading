@@ -238,19 +238,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-mono);
 
   <div class="divider"></div>
 
-  <div class="block-label">current roblox version</div>
-  <div id="current-card" style="display:none" class="current-card">
-    <div class="left">
-      <span class="tag">windows — live channel</span>
-      <span class="ver" id="cur-ver"></span>
-      <span class="date" id="cur-date"></span>
-    </div>
-    <button class="open-btn" onclick="openCurrent()">open download</button>
-  </div>
-  <div class="load-status loading" id="cur-status"><span class="spinner"></span>fetching current version...</div>
-
-  <div class="divider"></div>
-
   <div class="block-label">by executor</div>
   <div class="load-status loading" id="list-status"><span class="spinner"></span>fetching executor list...</div>
   <div class="executor-list" id="list"></div>
@@ -264,7 +251,7 @@ let currentVersion = null;
 
 function makeUrl(v) { return `https://rdd.latte.to/?channel=LIVE&binaryType=WindowsPlayer&version=${v.trim()}`; }
 function go(v) { window.open(makeUrl(v), '_blank'); }
-function openCurrent() { if (currentVersion) go(currentVersion); }
+
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -293,15 +280,9 @@ async function loadCurrent() {
     if (!r.ok) throw new Error();
     const d = await r.json();
     currentVersion = d.Windows;
-    document.getElementById('cur-ver').textContent = d.Windows;
-    document.getElementById('cur-date').textContent = 'updated ' + d.WindowsDate;
-    document.getElementById('cur-status').style.display = 'none';
-    document.getElementById('current-card').style.display = 'flex';
     document.getElementById('custom-input').placeholder = d.Windows;
   } catch(e) {
-    const s = document.getElementById('cur-status');
-    s.className = 'load-status error';
-    s.textContent = 'failed to fetch current version.';
+    console.error('failed to fetch current version.', e);
   }
 }
 
