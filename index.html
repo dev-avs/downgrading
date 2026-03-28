@@ -71,8 +71,8 @@
       width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
       position: relative; cursor: default;
     }
+    .status-dot.blue { background: #6db8ff; box-shadow: 0 0 6px #6db8ff88; }
     .status-dot.green { background: #6dff6d; box-shadow: 0 0 6px #6dff6d88; }
-    .status-dot.yellow { background: #ffd76d; box-shadow: 0 0 6px #ffd76d88; }
     .status-dot.red { background: #ff6d6d; box-shadow: 0 0 6px #ff6d6d88; }
     .status-dot .tooltip {
       display: none; position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
@@ -195,15 +195,15 @@
       filtered.forEach((ex, i) => {
         let dotClass, tipText;
         if (!ex.updateStatus) {
-          dotClass = 'red';
-          tipText = 'outdated — not on current roblox version';
-        } else if (ex.detected) {
-          dotClass = 'yellow';
-          tipText = 'detected — updated but flagged by hyperion';
-        } else {
-          dotClass = 'green';
-          tipText = 'undetected + updated — safe to use';
-        }
+        dotClass = 'red';
+        tipText = 'this executor is not updated';
+      } else if (ex.detected) {
+        dotClass = 'green';
+        tipText = 'this executor is bypassing client modification bans';
+      } else {
+        dotClass = 'blue';
+        tipText = 'this executor is bypassing all bans and is safe to use';
+      }
 
         const row = document.createElement('div');
         row.className = 'executor-item';
