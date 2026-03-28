@@ -13,13 +13,30 @@ html, body { background: #0a0a0a; min-height: 100vh; }
   --text: #e8e8e8; --muted: #555;
   --font-head: 'Syne', sans-serif; --font-mono: 'Share Tech Mono', monospace;
 }
+body.light {
+  --bg: #f5f5f0; --border: #ddd; --accent: #5a8a00;
+  --text: #111; --muted: #999;
+}
+body.light #app { background: var(--bg); }
+body.light .current-card { background: #f0f7d4; }
+body.light .executor-item:hover { background: #f0f0e8; border-color: #aaa; }
+body.light .status-dot .tooltip { background: #fff; }
+body.light .custom-input { background: #fff; }
+.theme-btn {
+  background: transparent; border: 1px solid var(--border); border-radius: 2px;
+  cursor: pointer; padding: 4px 6px; display: flex; align-items: center;
+  flex-shrink: 0; transition: border-color 0.1s;
+}
+.theme-btn:hover { border-color: var(--accent); }
+.theme-btn img { width: 16px; height: 16px; filter: invert(1); }
+body.light .theme-btn img { filter: invert(0); }
 #app { background: var(--bg); padding: 1.25rem; font-family: var(--font-mono); color: var(--text); min-height: 100vh; }
 .header {
   font-family: var(--font-head); font-size: 11px; font-weight: 700;
   letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase;
   margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;
 }
-.header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.header-line { flex: 1; height: 1px; background: var(--border); }
 .current-card {
   border: 1px solid var(--accent); border-radius: 2px;
   padding: 14px 16px; margin-bottom: 1.5rem;
@@ -126,7 +143,13 @@ html, body { background: #0a0a0a; min-height: 100vh; }
 </head>
 <body>
 <div id="app">
-  <div class="header">weao downgrader</div>
+<div class="header">
+  weao downgrader
+  <div class="header-line"></div>
+  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">
+    <img id="theme-icon" src="https://www.svgrepo.com/svg/532889/sun" />
+  </button>
+</div>
 
   <div class="section-label">current roblox version</div>
   <div id="current-card" style="display:none" class="current-card">
@@ -169,7 +192,21 @@ html, body { background: #0a0a0a; min-height: 100vh; }
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2000);
   }
+  function toggleTheme() {
+    const isLight = document.body.classList.toggle('light');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    document.getElementById('theme-icon').src = isLight
+      ? 'https://www.svgrepo.com/svg/532875/moon'
+      : 'https://www.svgrepo.com/svg/532889/sun';
+  }
 
+  (function() {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light') {
+      document.body.classList.add('light');
+      document.getElementById('theme-icon').src = 'https://www.svgrepo.com/svg/532875/moon';
+    }
+  })();
   async function loadCurrent() {
     try {
       const r = await fetch('/api/current');
