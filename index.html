@@ -229,17 +229,25 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-mono);
   </div>
 
   <div class="current-block">
-    <div class="block-label">current roblox version</div>
-    <div id="current-card" style="display:none" class="current-card">
-      <div class="left">
-        <span class="tag">windows — live channel</span>
-        <span class="ver" id="cur-ver"></span>
-        <span class="date" id="cur-date"></span>
-      </div>
-      <button class="open-btn" onclick="openCurrent()">open download</button>
+    <div class="block-label">custom version hash</div>
+    <div class="custom-row">
+      <input class="custom-input" id="custom-input" placeholder="version-fetching..." spellcheck="false" />
+      <button class="open-btn" onclick="goCustom()">open</button>
     </div>
-    <div class="load-status loading" id="cur-status"><span class="spinner"></span>fetching current version...</div>
   </div>
+
+  <div class="divider"></div>
+
+  <div class="block-label">current roblox version</div>
+  <div id="current-card" style="display:none" class="current-card">
+    <div class="left">
+      <span class="tag">windows — live channel</span>
+      <span class="ver" id="cur-ver"></span>
+      <span class="date" id="cur-date"></span>
+    </div>
+    <button class="open-btn" onclick="openCurrent()">open download</button>
+  </div>
+  <div class="load-status loading" id="cur-status"><span class="spinner"></span>fetching current version...</div>
 
   <div class="divider"></div>
 
@@ -247,13 +255,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-mono);
   <div class="load-status loading" id="list-status"><span class="spinner"></span>fetching executor list...</div>
   <div class="executor-list" id="list"></div>
 
-  <div class="divider"></div>
-
-  <div class="block-label">custom version hash</div>
-  <div class="custom-row">
-    <input class="custom-input" id="custom-input" placeholder="version-6776addb8fbc4d17" spellcheck="false" />
-    <button class="open-btn" onclick="goCustom()">open</button>
-  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -296,6 +297,7 @@ async function loadCurrent() {
     document.getElementById('cur-date').textContent = 'updated ' + d.WindowsDate;
     document.getElementById('cur-status').style.display = 'none';
     document.getElementById('current-card').style.display = 'flex';
+    document.getElementById('custom-input').placeholder = d.Windows;
   } catch(e) {
     const s = document.getElementById('cur-status');
     s.className = 'load-status error';
@@ -383,8 +385,9 @@ async function loadExecutors() {
 
 function goCustom() {
   const val = document.getElementById('custom-input').value.trim();
-  if (!val) { showToast('enter a version hash'); return; }
-  const version = val.startsWith('version-') ? val : 'version-' + val;
+  const versionToUse = val || currentVersion;
+  if (!versionToUse) { showToast('enter a version hash or wait for current version to load'); return; }
+  const version = versionToUse.startsWith('version-') ? versionToUse : 'version-' + versionToUse;
   go(version);
 }
 
