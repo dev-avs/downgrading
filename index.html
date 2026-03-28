@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WEAO Downgrader</title>
+</head>
+<body>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #0a0a0a !important; min-height: 100vh; }
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111;
+    --border: #2a2a2a;
+    --accent: #c8ff00;
+    --text: #e8e8e8;
+    --muted: #555;
+    --font-head: 'Syne', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+  #app {
+    background: var(--bg);
+    padding: 2rem;
+    font-family: var(--font-mono);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .header {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .status { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
+  .status.loading { color: var(--accent); }
+  .status.error { color: #ff4444; }
+  .executor-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 1.5rem; }
+  .executor-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: border-color 0.1s, background 0.1s;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    text-align: left;
+    width: 100%;
+  }
+  .executor-item:hover { border-color: var(--accent); background: #1a1a0a; }
+  .executor-item.selected { border-color: var(--accent); background: #1a1a0a; }
+  .executor-item .idx { color: var(--muted); min-width: 20px; font-size: 11px; }
+  .executor-item .name { flex: 1; }
+  .executor-item .version { color: var(--muted); font-size: 11px; }
+  .cmd-section { margin-top: 1.5rem; }
+  .cmd-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .cmd-box {
+    background: #000;
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    padding: 12px 16px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    word-break: break-all;
+    line-height: 1.6;
+    position: relative;
+  }
+  .cmd-note { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px;
+    background: transparent;
+    border: 1px solid var(--muted);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: border-color 0.1s, color 0.1s;
+    border-radius: 2px;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .spinner {
+    display: inline-block; width: 8px; height: 8px;
+    border: 1px solid var(--accent); border-top-color: transparent;
+    border-radius: 50%; animation: spin 0.6s linear infinite;
+    margin-right: 6px; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+<div id="app">
+  <div class="header">weao downgrader</div>
+  <div class="status loading" id="status"><span class="spinner"></span>fetching executor list...</div>
+  <div class="executor-list" id="list"></div>
+  <div class="cmd-section" id="cmd-section" style="display:none">
+    <div class="cmd-label">generated command</div>
+    <div class="cmd-box" id="cmd-box">
+      <button class="copy-btn" id="copy-btn" onclick="copyCmd()">copy</button>
+      <span id="cmd-text"></span>
+    </div>
+    <div class="cmd-note" id="cmd-note"></div>
+  </div>
+</div>
+<script>
+const API_URLS = ['/api/executors'];
+let executors = [];
+
+async function fetchExecutors() {
+  try {
+    const r = await fetch('/api/executors');
+    if (!r.ok) return null;
+    const data = await r.json();
+    return data.filter(e =>
+      e.platform === 'Windows' &&
+      e.rbxversion && e.rbxversion.match(/^version-/) &&
+      e.extype === 'wexecutor'
+    );
+  } catch(e) { return null; }
+}
+
+function renderList() {
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  executors.forEach((ex, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'executor-item';
+    btn.innerHTML = `<span class="idx">${i+1}</span><span class="name">${ex.title.trim()}</span><span class="version">${ex.rbxversion.trim()}</span>`;
+    btn.onclick = () => selectExecutor(i);
+    list.appendChild(btn);
+  });
+}
+
+function selectExecutor(i) {
+  document.querySelectorAll('.executor-item').forEach((el, idx) => {
+    el.classList.toggle('selected', idx === i);
+  });
+  const ex = executors[i];
+  const ver = ex.rbxversion.trim();
+  const url = `https://rdd.latte.to/?channel=LIVE&binaryType=WindowsPlayer&version=${ver}`;
+  document.getElementById('cmd-text').textContent = url;
+  document.getElementById('cmd-note').textContent =
+    `open this url in your browser to download the roblox zip for ${ex.title.trim()} (${ver}), then run the downgrade script`;
+  document.getElementById('cmd-section').style.display = '';
+}
+
+function copyCmd() {
+  const text = document.getElementById('cmd-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'copied';
+    setTimeout(() => btn.textContent = 'copy', 1500);
+  });
+}
+
+(async () => {
+  const data = await fetchExecutors();
+  const status = document.getElementById('status');
+  if (!data || data.length === 0) {
+    status.className = 'status error';
+    status.textContent = 'failed to fetch executor list. check your connection or try again.';
+    return;
+  }
+  executors = data;
+  status.className = 'status';
+  status.textContent = `${executors.length} executors available — select one below`;
+  renderList();
+})();
+</script>
+
+</body>
+</html>
