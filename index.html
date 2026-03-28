@@ -9,76 +9,76 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { min-height: 100vh; }
 :root {
---bg: #0a0a0a;
---surface: #111111;
---surface2: #161616;
---border: #222;
---border2: #2e2e2e;
---accent: #c8ff00;
---accent-dim: #8ab300;
---text: #e8e8e8;
---text2: #999;
---text3: #555;
---red: #ff5555;
---green: #55ff88;
---blue: #55aaff;
---font-head: 'Syne', sans-serif;
---font-mono: 'Share Tech Mono', monospace;
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --surface2: #161616;
+  --border: #222;
+  --border2: #2e2e2e;
+  --accent: #c8ff00;
+  --accent-dim: #8ab300;
+  --text: #e8e8e8;
+  --text2: #999;
+  --text3: #555;
+  --red: #ff5555;
+  --green: #55ff88;
+  --blue: #55aaff;
+  --font-head: 'Syne', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
 }
 body.light {
---bg: #f5f0e8;
---surface: #ede8de;
---surface2: #e5dfd3;
---border: #cec8bc;
---border2: #b8b2a6;
---accent: #3d6500;
---accent-dim: #5a9e00;
---text: #1a1712;
---text2: #5a5650;
---text3: #9a9590;
---red: #cc2200;
---green: #1a7a3a;
---blue: #0055bb;
+  --bg: #f5f0e8;
+  --surface: #ede8de;
+  --surface2: #e5dfd3;
+  --border: #cec8bc;
+  --border2: #b8b2a6;
+  --accent: #3d6500;
+  --accent-dim: #5a9e00;
+  --text: #1a1712;
+  --text2: #5a5650;
+  --text3: #9a9590;
+  --red: #cc2200;
+  --green: #1a7a3a;
+  --blue: #0055bb;
 }
 body { background: var(--bg); color: var(--text); font-family: var(--font-mono); transition: background 0.2s, color 0.2s; }
 #app { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
 .topbar {
-display: flex; align-items: center; justify-content: space-between;
-margin-bottom: 2.5rem; padding-bottom: 1rem;
-border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 2.5rem; padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
 }
 .logo {
-font-family: var(--font-head); font-size: 13px; font-weight: 700;
-letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase;
+  font-family: var(--font-head); font-size: 13px; font-weight: 700;
+  letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase;
 }
 .logo span { color: var(--text3); font-weight: 400; }
 .theme-btn {
-background: var(--surface); border: 1px solid var(--border2); border-radius: 6px;
-cursor: pointer; padding: 6px 8px; display: flex; align-items: center; justify-content: center;
-transition: border-color 0.15s, background 0.15s;
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 6px;
+  cursor: pointer; padding: 6px 8px; display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.15s, background 0.15s;
 }
 .theme-btn:hover { border-color: var(--accent); background: var(--surface2); }
 .theme-btn svg { width: 15px; height: 15px; stroke: var(--text2); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .current-block { margin-bottom: 2rem; }
 .block-label {
-font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-color: var(--text3); margin-bottom: 10px; font-family: var(--font-head);
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text3); margin-bottom: 10px; font-family: var(--font-head);
 }
 .current-card {
-background: var(--surface); border: 1px solid var(--accent);
-border-radius: 8px; padding: 16px 20px;
-display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  background: var(--surface); border: 1px solid var(--accent);
+  border-radius: 8px; padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
 }
 .current-card .left { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 .current-card .tag { font-size: 10px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; font-family: var(--font-head); }
 .current-card .ver { font-size: 15px; color: var(--text); word-break: break-all; font-weight: 400; }
 .current-card .date { font-size: 11px; color: var(--text2); }
 .open-btn {
-background: var(--accent); border: none; border-radius: 6px;
-color: #000; font-family: var(--font-head); font-size: 11px;
-font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-padding: 10px 20px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
-transition: opacity 0.15s;
+  background: var(--accent); border: none; border-radius: 6px;
+  color: #000; font-family: var(--font-head); font-size: 11px;
+  font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 10px 20px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: opacity 0.15s;
 }
 .open-btn:hover { opacity: 0.82; }
 .load-status { font-size: 12px; color: var(--text2); margin-bottom: 1rem; }
@@ -86,88 +86,135 @@ transition: opacity 0.15s;
 .load-status.error { color: var(--red); }
 .executor-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 2rem; }
 .executor-card {
-background: var(--surface); border: 1px solid var(--border);
-border-radius: 8px; padding: 14px 16px;
-transition: border-color 0.15s, background 0.15s;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px;
+  transition: border-color 0.15s, background 0.15s;
 }
 .executor-card:hover { border-color: var(--border2); background: var(--surface2); }
 .executor-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
 .executor-idx { font-size: 11px; color: var(--text3); min-width: 18px; flex-shrink: 0; }
 .status-dot {
-width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; position: relative; cursor: default;
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; position: relative; cursor: default;
 }
 .status-dot.blue { background: var(--blue); }
 .status-dot.green { background: var(--green); }
 .status-dot.red { background: var(--red); }
 .status-dot .tip {
-display: none; position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-background: var(--surface2); border: 1px solid var(--border2); border-radius: 4px;
-padding: 5px 10px; font-size: 11px; color: var(--text); white-space: nowrap;
-z-index: 20; pointer-events: none;
+  display: none; position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  background: var(--surface2); border: 1px solid var(--border2); border-radius: 4px;
+  padding: 5px 10px; font-size: 11px; color: var(--text); white-space: nowrap;
+  z-index: 20; pointer-events: none;
 }
 .status-dot:hover .tip { display: block; }
 .executor-name { font-size: 14px; color: var(--text); flex: 1; }
 .executor-version { font-size: 10px; color: var(--text3); margin-left: auto; flex-shrink: 0; }
 .executor-meta {
-display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-padding-left: 28px; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  padding-left: 28px; margin-bottom: 10px;
 }
 .badge {
-font-size: 10px; font-family: var(--font-head); font-weight: 600;
-letter-spacing: 0.08em; text-transform: uppercase;
-padding: 3px 8px; border-radius: 4px; border: 1px solid;
+  font-size: 10px; font-family: var(--font-head); font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px; border: 1px solid;
+  position: relative; cursor: default;
 }
-.badge.free { color: var(--green); border-color: var(--green); background: transparent; }
-.badge.paid { color: var(--text2); border-color: var(--border2); background: transparent; }
-.badge.unc { color: var(--blue); border-color: var(--blue); background: transparent; }
+/* free — green tinted background */
+.badge.free {
+  color: var(--green);
+  border-color: var(--green);
+  background: rgba(85, 255, 136, 0.1);
+}
+/* paid — red tinted background */
+.badge.paid {
+  color: var(--red);
+  border-color: var(--red);
+  background: rgba(255, 85, 85, 0.1);
+}
+/* unc — blue, hoverable */
+.badge.unc { color: var(--blue); border-color: var(--blue); background: transparent; cursor: help; }
+/* sunc — purple, hoverable */
+.badge.sunc { color: #b88cff; border-color: #b88cff; background: transparent; cursor: help; }
+/* generic extra info badges */
 .badge.cost { color: var(--text2); border-color: var(--border2); background: transparent; }
+
+/* Tooltip on badge hover */
+.badge .badge-tip {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 7px);
+  transform: translateX(-50%);
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 11px;
+  color: var(--text);
+  white-space: nowrap;
+  z-index: 30;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 400;
+}
+.badge .badge-tip::after {
+  content: '';
+  position: absolute;
+  top: 100%; left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--border2);
+}
+.badge:hover .badge-tip { display: block; }
+
 .executor-btns { display: flex; gap: 6px; padding-left: 28px; flex-wrap: wrap; }
 .btn-site {
-background: transparent; border: 1px solid var(--border2); border-radius: 5px;
-color: var(--text2); font-family: var(--font-head); font-size: 10px;
-font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
-padding: 6px 14px; cursor: pointer; transition: border-color 0.15s, color 0.15s;
+  background: transparent; border: 1px solid var(--border2); border-radius: 5px;
+  color: var(--text2); font-family: var(--font-head); font-size: 10px;
+  font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 6px 14px; cursor: pointer; transition: border-color 0.15s, color 0.15s;
 }
 .btn-site:hover { border-color: var(--text2); color: var(--text); }
 .btn-dl {
-background: var(--accent); border: none; border-radius: 5px;
-color: #000; font-family: var(--font-head); font-size: 10px;
-font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-padding: 6px 14px; cursor: pointer; transition: opacity 0.15s;
+  background: var(--accent); border: none; border-radius: 5px;
+  color: #000; font-family: var(--font-head); font-size: 10px;
+  font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 6px 14px; cursor: pointer; transition: opacity 0.15s;
 }
 .btn-dl:hover { opacity: 0.82; }
 .divider { height: 1px; background: var(--border); margin: 2rem 0; }
 .custom-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .custom-input {
-flex: 1; min-width: 0;
-background: var(--surface); border: 1px solid var(--border2); border-radius: 6px;
-color: var(--text); font-family: var(--font-mono); font-size: 13px;
-padding: 10px 14px; outline: none; transition: border-color 0.15s;
+  flex: 1; min-width: 0;
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 6px;
+  color: var(--text); font-family: var(--font-mono); font-size: 13px;
+  padding: 10px 14px; outline: none; transition: border-color 0.15s;
 }
 .custom-input::placeholder { color: var(--text3); }
 .custom-input:focus { border-color: var(--accent); }
 .spinner {
-display: inline-block; width: 8px; height: 8px;
-border: 1px solid var(--accent); border-top-color: transparent;
-border-radius: 50%; animation: spin 0.6s linear infinite;
-margin-right: 6px; vertical-align: middle;
+  display: inline-block; width: 8px; height: 8px;
+  border: 1px solid var(--accent); border-top-color: transparent;
+  border-radius: 50%; animation: spin 0.6s linear infinite;
+  margin-right: 6px; vertical-align: middle;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .toast {
-position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
-background: var(--accent); color: #000; font-family: var(--font-mono);
-font-size: 12px; padding: 8px 20px; border-radius: 6px;
-opacity: 0; transition: opacity 0.2s; pointer-events: none; font-weight: 700;
-white-space: nowrap; max-width: 90vw;
+  position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--accent); color: #000; font-family: var(--font-mono);
+  font-size: 12px; padding: 8px 20px; border-radius: 6px;
+  opacity: 0; transition: opacity 0.2s; pointer-events: none; font-weight: 700;
+  white-space: nowrap; max-width: 90vw;
 }
 .toast.show { opacity: 1; }
 @media (max-width: 500px) {
-#app { padding: 1rem 1rem 3rem; }
-.executor-version { display: none; }
-.current-card { flex-direction: column; align-items: flex-start; }
-.open-btn { width: 100%; text-align: center; }
-.executor-btns { padding-left: 0; }
-.btn-dl, .btn-site { flex: 1; text-align: center; }
+  #app { padding: 1rem 1rem 3rem; }
+  .executor-version { display: none; }
+  .current-card { flex-direction: column; align-items: flex-start; }
+  .open-btn { width: 100%; text-align: center; }
+  .executor-btns { padding-left: 0; }
+  .btn-dl, .btn-site { flex: 1; text-align: center; }
 }
 </style>
 </head>
@@ -287,12 +334,29 @@ async function loadExecutors() {
         ? `<button class="btn-site" onclick="window.open('${ex.websitelink}','_blank')">site</button>`
         : '';
 
-      const badgesHtml = [
-        ex.free ? '<span class="badge free">free</span>' : (ex.cost ? `<span class="badge cost">${ex.cost}</span>` : '<span class="badge paid">paid</span>'),
-        ex.uncStatus ? '<span class="badge unc">unc</span>' : '',
-        ex.decompiler ? '<span class="badge cost">decompiler</span>' : '',
-        ex.multiInject ? '<span class="badge cost">multi-inject</span>' : '',
-      ].join('');
+      // free / paid badge
+      const priceBadge = ex.free
+        ? '<span class="badge free">free</span>'
+        : (ex.cost
+            ? `<span class="badge paid">${ex.cost}</span>`
+            : '<span class="badge paid">paid</span>');
+
+      // unc badge — tooltip with percentage if available
+      const uncBadge = ex.uncStatus
+        ? (ex.uncPercentage != null
+            ? `<span class="badge unc">unc<span class="badge-tip">UNC: ${ex.uncPercentage}%</span></span>`
+            : '<span class="badge unc">unc</span>')
+        : '';
+
+      // sunc badge — shown whenever suncPercentage exists
+      const suncBadge = ex.suncPercentage != null
+        ? `<span class="badge sunc">sunc<span class="badge-tip">sUNC: ${ex.suncPercentage}%</span></span>`
+        : '';
+
+      const decompilerBadge = ex.decompiler ? '<span class="badge cost">decompiler</span>' : '';
+      const multiInjectBadge = ex.multiInject ? '<span class="badge cost">multi-inject</span>' : '';
+
+      const badgesHtml = [priceBadge, uncBadge, suncBadge, decompilerBadge, multiInjectBadge].join('');
 
       card.innerHTML = `
         <div class="executor-top">
