@@ -44,14 +44,43 @@
     .executor-item {
       display: flex; align-items: center; gap: 12px;
       padding: 10px 12px; border: 1px solid var(--border); border-radius: 2px;
-      cursor: pointer; transition: border-color 0.1s, background 0.1s;
+      transition: border-color 0.1s, background 0.1s;
       background: transparent; color: var(--text);
-      font-family: var(--font-mono); font-size: 13px; text-align: left; width: 100%;
+      font-family: var(--font-mono); font-size: 13px; width: 100%;
     }
-    .executor-item:hover { border-color: var(--accent); background: #1a1a0a; }
+    .executor-item:hover { border-color: #444; background: #111; }
     .executor-item .idx { color: var(--muted); min-width: 20px; font-size: 11px; }
     .executor-item .name { flex: 1; }
     .executor-item .version { color: var(--muted); font-size: 11px; }
+    .item-btns { display: flex; gap: 6px; flex-shrink: 0; }
+    .dl-btn {
+      background: var(--accent); border: none; border-radius: 2px;
+      color: #000; font-family: var(--font-head); font-size: 10px;
+      font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 6px 12px; cursor: pointer; white-space: nowrap;
+    }
+    .dl-btn:hover { opacity: 0.85; }
+    .site-btn {
+      background: transparent; border: 1px solid var(--muted); border-radius: 2px;
+      color: var(--muted); font-family: var(--font-head); font-size: 10px;
+      font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 6px 12px; cursor: pointer; white-space: nowrap;
+    }
+    .site-btn:hover { border-color: var(--text); color: var(--text); }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+      position: relative; cursor: default;
+    }
+    .status-dot.green { background: #6dff6d; box-shadow: 0 0 6px #6dff6d88; }
+    .status-dot.yellow { background: #ffd76d; box-shadow: 0 0 6px #ffd76d88; }
+    .status-dot.red { background: #ff6d6d; box-shadow: 0 0 6px #ff6d6d88; }
+    .status-dot .tooltip {
+      display: none; position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+      background: #1a1a1a; border: 1px solid var(--border); border-radius: 2px;
+      padding: 6px 10px; font-size: 11px; color: var(--text); white-space: nowrap;
+      z-index: 10; pointer-events: none; line-height: 1.6;
+    }
+    .status-dot:hover .tooltip { display: block; }
     .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
     .custom-row { display: flex; gap: 8px; align-items: stretch; }
     .custom-input {
@@ -162,12 +191,33 @@
       if (!filtered.length) { s.className = 'status error'; s.textContent = 'no executors found.'; return; }
       s.className = 'status';
       s.textContent = `${filtered.length} executors available`;
+
       filtered.forEach((ex, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'executor-item';
-        btn.innerHTML = `<span class="idx">${i+1}</span><span class="name">${ex.title.trim()}</span><span class="version">${ex.rbxversion.trim()}</span>`;
-        btn.onclick = () => go(ex.rbxversion);
-        list.appendChild(btn);
+        let dotClass, tipText;
+        if (!ex.updateStatus) {
+          dotClass = 'red';
+          tipText = 'outdated — not on current roblox version';
+        } else if (ex.detected) {
+          dotClass = 'yellow';
+          tipText = 'detected — updated but flagged by hyperion';
+        } else {
+          dotClass = 'green';
+          tipText = 'undetected + updated — safe to use';
+        }
+
+        const row = document.createElement('div');
+        row.className = 'executor-item';
+        row.innerHTML = `
+          <span class="idx">${i+1}</span>
+          <div class="status-dot ${dotClass}"><span class="tooltip">${tipText}</span></div>
+          <span class="name">${ex.title.trim()}</span>
+          <span class="version">${ex.rbxversion.trim()}</span>
+          <div class="item-btns">
+            ${ex.websitelink ? `<button class="site-btn" onclick="window.open('${ex.websitelink}','_blank')">site</button>` : ''}
+            <button class="dl-btn" onclick="go('${ex.rbxversion}')">download</button>
+          </div>
+        `;
+        list.appendChild(row);
       });
     } catch(e) {
       const s = document.getElementById('list-status');
