@@ -5,115 +5,164 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WEAO Downgrader</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;600;700&display=swap');
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { background: #0a0a0a; min-height: 100vh; }
+    html, body { min-height: 100vh; }
     :root {
-      --bg: #0a0a0a; --border: #2a2a2a; --accent: #c8ff00;
-      --text: #e8e8e8; --muted: #777;
-      --font-head: 'Syne', sans-serif; --font-mono: 'Share Tech Mono', monospace;
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #161616;
+      --border: #222;
+      --border2: #2e2e2e;
+      --accent: #c8ff00;
+      --accent-dim: #8ab300;
+      --text: #e8e8e8;
+      --text2: #999;
+      --text3: #555;
+      --red: #ff5555;
+      --green: #55ff88;
+      --blue: #55aaff;
+      --font-head: 'Syne', sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
     }
     body.light {
-      --bg: #f0efe8; --border: #bbb; --accent: #3a6500;
-      --text: #111; --muted: #666;
+      --bg: #f4f3ee;
+      --surface: #eceae3;
+      --surface2: #e4e2da;
+      --border: #d0cec6;
+      --border2: #bbb;
+      --accent: #3d6e00;
+      --accent-dim: #5a9e00;
+      --text: #111;
+      --text2: #555;
+      --text3: #999;
+      --red: #cc2200;
+      --green: #1a7a3a;
+      --blue: #0055bb;
     }
-    body.light html, body.light { background: #f0efe8; }
-    #app { background: var(--bg); padding: 1.25rem; font-family: var(--font-mono); color: var(--text); min-height: 100vh; transition: background 0.2s, color 0.2s; }
-    .header {
-      font-family: var(--font-head); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase;
-      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;
-    }
-    .header-line { flex: 1; height: 1px; background: var(--border); }
-    .theme-btn {
-      background: transparent; border: 1px solid var(--border); border-radius: 2px;
-      cursor: pointer; padding: 5px 7px; display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; transition: border-color 0.1s;
-    }
-    .theme-btn:hover { border-color: var(--accent); }
-    .theme-btn svg { width: 14px; height: 14px; stroke: var(--text); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-    .current-card {
-      border: 1px solid var(--accent); border-radius: 2px;
-      padding: 14px 16px; margin-bottom: 1.5rem;
+    body { background: var(--bg); color: var(--text); font-family: var(--font-mono); transition: background 0.2s, color 0.2s; }
+
+    #app { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    .topbar {
       display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; background: #111a00; flex-wrap: wrap;
+      margin-bottom: 2.5rem; padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
     }
-    body.light .current-card { background: #e8f5c8; }
-    .current-card .left { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-    .current-card .tag { font-size: 10px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; }
-    .current-card .ver { font-size: 13px; color: var(--text); word-break: break-all; }
-    .current-card .date { font-size: 11px; color: var(--muted); }
-    .current-card .open-btn {
-      background: var(--accent); border: none; border-radius: 2px;
-      color: #000; font-family: var(--font-head); font-size: 10px;
-      font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
-      padding: 8px 16px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    .logo {
+      font-family: var(--font-head); font-size: 13px; font-weight: 700;
+      letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase;
     }
-    .section-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
-    .load-status { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
-    .load-status.loading { color: var(--accent); }
-    .load-status.error { color: #ff4444; }
-    .executor-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 2rem; }
-    .executor-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; border: 1px solid var(--border); border-radius: 2px;
-      transition: border-color 0.1s, background 0.1s;
-      background: transparent; color: var(--text);
-      font-family: var(--font-mono); font-size: 13px; width: 100%;
-      flex-wrap: wrap;
+    .logo span { color: var(--text3); font-weight: 400; }
+    .theme-btn {
+      background: var(--surface); border: 1px solid var(--border2); border-radius: 6px;
+      cursor: pointer; padding: 6px 8px; display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s, background 0.15s;
     }
-    .executor-item:hover { border-color: var(--accent); background: #1a1a0a; }
-    body.light .executor-item:hover { background: #e0edcc; border-color: var(--accent); }
-    .executor-item .idx { color: var(--muted); min-width: 18px; font-size: 11px; flex-shrink: 0; }
-    .executor-item .name { flex: 1; min-width: 80px; font-size: 12px; }
-    .executor-item .version { color: var(--muted); font-size: 10px; word-break: break-all; width: 100%; padding-left: 28px; }
-    .item-btns { display: flex; gap: 6px; flex-shrink: 0; margin-left: auto; }
-    .dl-btn {
-      background: var(--accent); border: none; border-radius: 2px;
-      color: #000; font-family: var(--font-head); font-size: 10px;
-      font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-      padding: 6px 12px; cursor: pointer; white-space: nowrap;
+    .theme-btn:hover { border-color: var(--accent); background: var(--surface2); }
+    .theme-btn svg { width: 15px; height: 15px; stroke: var(--text2); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+    .current-block { margin-bottom: 2rem; }
+    .block-label {
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text3); margin-bottom: 10px; font-family: var(--font-head);
     }
-    .dl-btn:hover { opacity: 0.85; }
-    .site-btn {
-      background: transparent; border: 1px solid var(--muted); border-radius: 2px;
-      color: var(--muted); font-family: var(--font-head); font-size: 10px;
-      font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-      padding: 6px 12px; cursor: pointer; white-space: nowrap;
+    .current-card {
+      background: var(--surface); border: 1px solid var(--accent);
+      border-radius: 8px; padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
     }
-    .site-btn:hover { border-color: var(--text); color: var(--text); }
-    .status-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-      position: relative; cursor: default;
-    }
-    .status-dot.blue { background: #6db8ff; box-shadow: 0 0 6px #6db8ff88; }
-    .status-dot.green { background: #6dff6d; box-shadow: 0 0 6px #6dff6d88; }
-    .status-dot.red { background: #ff6d6d; box-shadow: 0 0 6px #ff6d6d88; }
-    .status-dot .tooltip {
-      display: none; position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-      background: #1a1a1a; border: 1px solid #333; border-radius: 2px;
-      padding: 6px 10px; font-size: 11px; color: #e8e8e8; white-space: nowrap;
-      z-index: 10; pointer-events: none; line-height: 1.6;
-    }
-    body.light .status-dot .tooltip { background: #fff; border-color: #bbb; color: #111; }
-    .status-dot:hover .tooltip { display: block; }
-    .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
-    .custom-row { display: flex; gap: 8px; align-items: stretch; flex-wrap: wrap; }
-    .custom-input {
-      flex: 1; min-width: 0; background: #000; border: 1px solid var(--border); border-radius: 2px;
-      color: var(--text); font-family: var(--font-mono); font-size: 13px;
-      padding: 10px 12px; outline: none; transition: border-color 0.1s;
-    }
-    body.light .custom-input { background: #fff; color: #111; }
-    .custom-input:focus { border-color: var(--accent); }
-    .custom-input::placeholder { color: var(--muted); }
-    .go-btn {
-      background: var(--accent); border: none; border-radius: 2px;
+    .current-card .left { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .current-card .tag { font-size: 10px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; font-family: var(--font-head); }
+    .current-card .ver { font-size: 15px; color: var(--text); word-break: break-all; font-weight: 400; }
+    .current-card .date { font-size: 11px; color: var(--text2); }
+    .open-btn {
+      background: var(--accent); border: none; border-radius: 6px;
       color: #000; font-family: var(--font-head); font-size: 11px;
-      font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
-      padding: 10px 20px; cursor: pointer; white-space: nowrap;
+      font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 10px 20px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+      transition: opacity 0.15s;
     }
-    .go-btn:hover { opacity: 0.85; }
+    .open-btn:hover { opacity: 0.82; }
+
+    .load-status { font-size: 12px; color: var(--text2); margin-bottom: 1rem; }
+    .load-status.loading { color: var(--accent); }
+    .load-status.error { color: var(--red); }
+
+    .executor-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 2rem; }
+
+    .executor-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px 16px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .executor-card:hover { border-color: var(--border2); background: var(--surface2); }
+
+    .executor-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .executor-idx { font-size: 11px; color: var(--text3); min-width: 18px; flex-shrink: 0; }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; position: relative; cursor: default;
+    }
+    .status-dot.blue { background: var(--blue); }
+    .status-dot.green { background: var(--green); }
+    .status-dot.red { background: var(--red); }
+    .status-dot .tip {
+      display: none; position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      background: var(--surface2); border: 1px solid var(--border2); border-radius: 4px;
+      padding: 5px 10px; font-size: 11px; color: var(--text); white-space: nowrap;
+      z-index: 20; pointer-events: none;
+    }
+    .status-dot:hover .tip { display: block; }
+    .executor-name { font-size: 14px; color: var(--text); flex: 1; }
+    .executor-version { font-size: 10px; color: var(--text3); margin-left: auto; flex-shrink: 0; }
+
+    .executor-meta {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+      padding-left: 28px; margin-bottom: 10px;
+    }
+    .badge {
+      font-size: 10px; font-family: var(--font-head); font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 4px; border: 1px solid;
+    }
+    .badge.free { color: var(--green); border-color: var(--green); background: transparent; }
+    .badge.paid { color: var(--text2); border-color: var(--border2); background: transparent; }
+    .badge.unc { color: var(--blue); border-color: var(--blue); background: transparent; }
+    .badge.cost { color: var(--text2); border-color: var(--border2); background: transparent; }
+    .unc-bar-wrap { display: flex; align-items: center; gap: 8px; padding-left: 28px; margin-bottom: 12px; }
+    .unc-label { font-size: 10px; color: var(--text3); min-width: 32px; }
+    .unc-bar { flex: 1; height: 3px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+    .unc-fill { height: 100%; background: var(--blue); border-radius: 2px; }
+    .unc-pct { font-size: 10px; color: var(--text2); min-width: 28px; text-align: right; }
+
+    .executor-btns { display: flex; gap: 6px; padding-left: 28px; flex-wrap: wrap; }
+    .btn-site {
+      background: transparent; border: 1px solid var(--border2); border-radius: 5px;
+      color: var(--text2); font-family: var(--font-head); font-size: 10px;
+      font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 6px 14px; cursor: pointer; transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-site:hover { border-color: var(--text2); color: var(--text); }
+    .btn-dl {
+      background: var(--accent); border: none; border-radius: 5px;
+      color: #000; font-family: var(--font-head); font-size: 10px;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 6px 14px; cursor: pointer; transition: opacity 0.15s;
+    }
+    .btn-dl:hover { opacity: 0.82; }
+
+    .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+    .custom-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .custom-input {
+      flex: 1; min-width: 0;
+      background: var(--surface); border: 1px solid var(--border2); border-radius: 6px;
+      color: var(--text); font-family: var(--font-mono); font-size: 13px;
+      padding: 10px 14px; outline: none; transition: border-color 0.15s;
+    }
+    .custom-input::placeholder { color: var(--text3); }
+    .custom-input:focus { border-color: var(--accent); }
+
     .spinner {
       display: inline-block; width: 8px; height: 8px;
       border: 1px solid var(--accent); border-top-color: transparent;
@@ -121,88 +170,89 @@
       margin-right: 6px; vertical-align: middle;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
     .toast {
       position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
       background: var(--accent); color: #000; font-family: var(--font-mono);
-      font-size: 12px; padding: 8px 20px; border-radius: 2px;
+      font-size: 12px; padding: 8px 20px; border-radius: 6px;
       opacity: 0; transition: opacity 0.2s; pointer-events: none; font-weight: 700;
       white-space: nowrap; max-width: 90vw;
     }
     .toast.show { opacity: 1; }
-    @media (max-width: 480px) {
-      #app { padding: 1rem; }
-      .item-btns { width: 100%; padding-left: 28px; margin-left: 0; }
-      .dl-btn, .site-btn { flex: 1; text-align: center; padding: 8px 0; }
+
+    @media (max-width: 500px) {
+      #app { padding: 1rem 1rem 3rem; }
+      .executor-version { display: none; }
       .current-card { flex-direction: column; align-items: flex-start; }
-      .current-card .open-btn { width: 100%; text-align: center; padding: 10px 0; }
+      .open-btn { width: 100%; text-align: center; }
+      .executor-btns { padding-left: 0; }
+      .btn-dl, .btn-site { flex: 1; text-align: center; }
     }
   </style>
 </head>
 <body>
 <div id="app">
-  <div class="header">
-    weao downgrader
-    <div class="header-line"></div>
+  <div class="topbar">
+    <div class="logo">WEAO <span>/</span> Downgrader</div>
     <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">
-      <svg id="theme-icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      <svg id="theme-icon-moon" viewBox="0 0 24 24" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="icon-moon" viewBox="0 0 24 24" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
   </div>
 
-  <div class="section-label">current roblox version</div>
-  <div id="current-card" style="display:none" class="current-card">
-    <div class="left">
-      <span class="tag">windows — live channel</span>
-      <span class="ver" id="cur-ver"></span>
-      <span class="date" id="cur-date"></span>
+  <div class="current-block">
+    <div class="block-label">current roblox version</div>
+    <div id="current-card" style="display:none" class="current-card">
+      <div class="left">
+        <span class="tag">windows — live channel</span>
+        <span class="ver" id="cur-ver"></span>
+        <span class="date" id="cur-date"></span>
+      </div>
+      <button class="open-btn" onclick="openCurrent()">open download</button>
     </div>
-    <button class="open-btn" onclick="openCurrent()">open download</button>
+    <div class="load-status loading" id="cur-status"><span class="spinner"></span>fetching current version...</div>
   </div>
-  <div class="load-status loading" id="cur-status"><span class="spinner"></span>fetching current version...</div>
 
   <div class="divider"></div>
 
-  <div class="section-label">by executor</div>
+  <div class="block-label">by executor</div>
   <div class="load-status loading" id="list-status"><span class="spinner"></span>fetching executor list...</div>
   <div class="executor-list" id="list"></div>
 
   <div class="divider"></div>
 
-  <div class="section-label">custom version hash</div>
+  <div class="block-label">custom version hash</div>
   <div class="custom-row">
     <input class="custom-input" id="custom-input" placeholder="version-6776addb8fbc4d17" spellcheck="false" />
-    <button class="go-btn" onclick="goCustom()">open</button>
+    <button class="open-btn" onclick="goCustom()">open</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
   let currentVersion = null;
 
-  function makeUrl(version) {
-    return `https://rdd.latte.to/?channel=LIVE&binaryType=WindowsPlayer&version=${version.trim()}`;
-  }
-  function go(version) { window.open(makeUrl(version), '_blank'); }
+  function makeUrl(v) { return `https://rdd.latte.to/?channel=LIVE&binaryType=WindowsPlayer&version=${v.trim()}`; }
+  function go(v) { window.open(makeUrl(v), '_blank'); }
   function openCurrent() { if (currentVersion) go(currentVersion); }
 
   function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
+    t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2000);
   }
 
   function toggleTheme() {
-    const isLight = document.body.classList.toggle('light');
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    document.getElementById('theme-icon-sun').style.display = isLight ? 'none' : '';
-    document.getElementById('theme-icon-moon').style.display = isLight ? '' : 'none';
+    const light = document.body.classList.toggle('light');
+    localStorage.setItem('theme', light ? 'light' : 'dark');
+    document.getElementById('icon-sun').style.display = light ? 'none' : '';
+    document.getElementById('icon-moon').style.display = light ? '' : 'none';
   }
 
   (function() {
     if (localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light');
-      document.getElementById('theme-icon-sun').style.display = 'none';
-      document.getElementById('theme-icon-moon').style.display = '';
+      document.getElementById('icon-sun').style.display = 'none';
+      document.getElementById('icon-moon').style.display = '';
     }
   })();
 
@@ -210,10 +260,10 @@
     try {
       const r = await fetch('/api/current');
       if (!r.ok) throw new Error();
-      const data = await r.json();
-      currentVersion = data.Windows;
-      document.getElementById('cur-ver').textContent = data.Windows;
-      document.getElementById('cur-date').textContent = 'updated ' + data.WindowsDate;
+      const d = await r.json();
+      currentVersion = d.Windows;
+      document.getElementById('cur-ver').textContent = d.Windows;
+      document.getElementById('cur-date').textContent = 'updated ' + d.WindowsDate;
       document.getElementById('cur-status').style.display = 'none';
       document.getElementById('current-card').style.display = 'flex';
     } catch(e) {
@@ -230,41 +280,66 @@
       const data = await r.json();
       const filtered = data.filter(e =>
         e.platform === 'Windows' &&
-        e.rbxversion && e.rbxversion.match(/^version-/) &&
+        e.rbxversion && /^version-/.test(e.rbxversion) &&
         e.extype === 'wexecutor'
       );
       const list = document.getElementById('list');
       const s = document.getElementById('list-status');
       if (!filtered.length) { s.className = 'load-status error'; s.textContent = 'no executors found.'; return; }
       s.className = 'load-status';
-      s.textContent = `${filtered.length} executors available`;
+      s.textContent = `${filtered.length} executors`;
 
       filtered.forEach((ex, i) => {
         let dotClass, tipText;
-        if (!ex.updateStatus) {
-          dotClass = 'red';
-          tipText = 'outdated — not on current roblox version';
-        } else if (ex.detected) {
-          dotClass = 'green';
-          tipText = 'detected — updated but flagged by hyperion';
-        } else {
-          dotClass = 'blue';
-          tipText = 'undetected + updated — safe to use';
-        }
+        if (!ex.updateStatus) { dotClass = 'red'; tipText = 'outdated'; }
+        else if (ex.detected) { dotClass = 'green'; tipText = 'detected by hyperion'; }
+        else { dotClass = 'blue'; tipText = 'undetected + updated'; }
 
-        const row = document.createElement('div');
-        row.className = 'executor-item';
-        row.innerHTML = `
-          <span class="idx">${i+1}</span>
-          <div class="status-dot ${dotClass}"><span class="tooltip">${tipText}</span></div>
-          <span class="name">${ex.title.trim()}</span>
-          <span class="version">${ex.rbxversion.trim()}</span>
-          <div class="item-btns">
-            ${ex.websitelink ? `<button class="site-btn" onclick="window.open('${ex.websitelink}','_blank')">site</button>` : ''}
-            <button class="dl-btn" onclick="go('${ex.rbxversion}')">download</button>
+        const uncPct = ex.uncPercentage || ex.suncPercentage || null;
+        const suncPct = ex.suncPercentage || null;
+
+        const card = document.createElement('div');
+        card.className = 'executor-card';
+
+        const siteBtnHtml = ex.websitelink
+          ? `<button class="btn-site" onclick="window.open('${ex.websitelink}','_blank')">site</button>`
+          : '';
+
+        const badgesHtml = [
+          ex.free ? '<span class="badge free">free</span>' : (ex.cost ? `<span class="badge cost">${ex.cost}</span>` : '<span class="badge paid">paid</span>'),
+          ex.uncStatus ? '<span class="badge unc">unc</span>' : '',
+          ex.decompiler ? '<span class="badge cost">decompiler</span>' : '',
+          ex.multiInject ? '<span class="badge cost">multi-inject</span>' : '',
+        ].join('');
+
+        const uncBarHtml = uncPct !== null ? `
+          <div class="unc-bar-wrap">
+            <span class="unc-label">unc</span>
+            <div class="unc-bar"><div class="unc-fill" style="width:${uncPct}%"></div></div>
+            <span class="unc-pct">${uncPct}%</span>
+          </div>
+          ${suncPct !== null ? `<div class="unc-bar-wrap">
+            <span class="unc-label">sunc</span>
+            <div class="unc-bar"><div class="unc-fill" style="width:${suncPct}%"></div></div>
+            <span class="unc-pct">${suncPct}%</span>
+          </div>` : ''}
+        ` : '';
+
+        card.innerHTML = `
+          <div class="executor-top">
+            <span class="executor-idx">${i+1}</span>
+            <div class="status-dot ${dotClass}"><span class="tip">${tipText}</span></div>
+            <span class="executor-name">${ex.title.trim()}</span>
+            <span class="executor-version">${ex.rbxversion.trim()}</span>
+          </div>
+          <div class="executor-meta">${badgesHtml}</div>
+          ${uncBarHtml}
+          <div class="executor-btns">
+            ${siteBtnHtml}
+            <button class="btn-dl" onclick="go('${ex.rbxversion}')">download</button>
           </div>
         `;
-        list.appendChild(row);
+        list.appendChild(card);
       });
     } catch(e) {
       const s = document.getElementById('list-status');
