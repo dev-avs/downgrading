@@ -4,180 +4,191 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WEAO Downgrader</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: #0a0a0a; min-height: 100vh; }
+    :root {
+      --bg: #0a0a0a; --border: #2a2a2a; --accent: #c8ff00;
+      --text: #e8e8e8; --muted: #555;
+      --font-head: 'Syne', sans-serif; --font-mono: 'Share Tech Mono', monospace;
+    }
+    #app { background: var(--bg); padding: 2rem; font-family: var(--font-mono); color: var(--text); min-height: 100vh; }
+    .header {
+      font-family: var(--font-head); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase;
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;
+    }
+    .header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .current-card {
+      border: 1px solid var(--accent); border-radius: 2px;
+      padding: 14px 16px; margin-bottom: 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; background: #111a00;
+    }
+    .current-card .left { display: flex; flex-direction: column; gap: 4px; }
+    .current-card .tag { font-size: 10px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; }
+    .current-card .ver { font-size: 14px; color: var(--text); }
+    .current-card .date { font-size: 11px; color: var(--muted); }
+    .current-card .open-btn {
+      background: var(--accent); border: none; border-radius: 2px;
+      color: #000; font-family: var(--font-head); font-size: 10px;
+      font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 8px 16px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    }
+    .section-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+    .status { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
+    .status.loading { color: var(--accent); }
+    .status.error { color: #ff4444; }
+    .executor-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 2rem; }
+    .executor-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border: 1px solid var(--border); border-radius: 2px;
+      cursor: pointer; transition: border-color 0.1s, background 0.1s;
+      background: transparent; color: var(--text);
+      font-family: var(--font-mono); font-size: 13px; text-align: left; width: 100%;
+    }
+    .executor-item:hover { border-color: var(--accent); background: #1a1a0a; }
+    .executor-item .idx { color: var(--muted); min-width: 20px; font-size: 11px; }
+    .executor-item .name { flex: 1; }
+    .executor-item .version { color: var(--muted); font-size: 11px; }
+    .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+    .custom-row { display: flex; gap: 8px; align-items: stretch; }
+    .custom-input {
+      flex: 1; background: #000; border: 1px solid var(--border); border-radius: 2px;
+      color: var(--text); font-family: var(--font-mono); font-size: 13px;
+      padding: 10px 12px; outline: none; transition: border-color 0.1s;
+    }
+    .custom-input:focus { border-color: var(--accent); }
+    .custom-input::placeholder { color: var(--muted); }
+    .go-btn {
+      background: var(--accent); border: none; border-radius: 2px;
+      color: #000; font-family: var(--font-head); font-size: 11px;
+      font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 10px 20px; cursor: pointer; white-space: nowrap;
+    }
+    .go-btn:hover { opacity: 0.85; }
+    .spinner {
+      display: inline-block; width: 8px; height: 8px;
+      border: 1px solid var(--accent); border-top-color: transparent;
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+      margin-right: 6px; vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #000; font-family: var(--font-mono);
+      font-size: 12px; padding: 8px 20px; border-radius: 2px;
+      opacity: 0; transition: opacity 0.2s; pointer-events: none; font-weight: 700;
+    }
+    .toast.show { opacity: 1; }
+  </style>
 </head>
 <body>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700&display=swap');
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: #0a0a0a !important; min-height: 100vh; }
-  :root {
-    --bg: #0a0a0a;
-    --surface: #111;
-    --border: #2a2a2a;
-    --accent: #c8ff00;
-    --text: #e8e8e8;
-    --muted: #555;
-    --font-head: 'Syne', sans-serif;
-    --font-mono: 'Share Tech Mono', monospace;
-  }
-  #app {
-    background: var(--bg);
-    padding: 2rem;
-    font-family: var(--font-mono);
-    color: var(--text);
-    min-height: 100vh;
-  }
-  .header {
-    font-family: var(--font-head);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .status { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
-  .status.loading { color: var(--accent); }
-  .status.error { color: #ff4444; }
-  .executor-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 1.5rem; }
-  .executor-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    cursor: pointer;
-    transition: border-color 0.1s, background 0.1s;
-    background: transparent;
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 13px;
-    text-align: left;
-    width: 100%;
-  }
-  .executor-item:hover { border-color: var(--accent); background: #1a1a0a; }
-  .executor-item.selected { border-color: var(--accent); background: #1a1a0a; }
-  .executor-item .idx { color: var(--muted); min-width: 20px; font-size: 11px; }
-  .executor-item .name { flex: 1; }
-  .executor-item .version { color: var(--muted); font-size: 11px; }
-  .cmd-section { margin-top: 1.5rem; }
-  .cmd-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.1em; text-transform: uppercase; }
-  .cmd-box {
-    background: #000;
-    border: 1px solid var(--accent);
-    border-radius: 2px;
-    padding: 12px 16px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--accent);
-    word-break: break-all;
-    line-height: 1.6;
-    position: relative;
-  }
-  .cmd-note { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
-  .copy-btn {
-    position: absolute; top: 8px; right: 8px;
-    background: transparent;
-    border: 1px solid var(--muted);
-    color: var(--muted);
-    font-family: var(--font-mono);
-    font-size: 10px;
-    padding: 3px 8px;
-    cursor: pointer;
-    letter-spacing: 0.1em;
-    transition: border-color 0.1s, color 0.1s;
-    border-radius: 2px;
-  }
-  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .spinner {
-    display: inline-block; width: 8px; height: 8px;
-    border: 1px solid var(--accent); border-top-color: transparent;
-    border-radius: 50%; animation: spin 0.6s linear infinite;
-    margin-right: 6px; vertical-align: middle;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-</style>
 <div id="app">
   <div class="header">weao downgrader</div>
-  <div class="status loading" id="status"><span class="spinner"></span>fetching executor list...</div>
-  <div class="executor-list" id="list"></div>
-  <div class="cmd-section" id="cmd-section" style="display:none">
-    <div class="cmd-label">generated command</div>
-    <div class="cmd-box" id="cmd-box">
-      <button class="copy-btn" id="copy-btn" onclick="copyCmd()">copy</button>
-      <span id="cmd-text"></span>
+
+  <div class="section-label">current roblox version</div>
+  <div id="current-card" style="display:none" class="current-card">
+    <div class="left">
+      <span class="tag">windows — live channel</span>
+      <span class="ver" id="cur-ver"></span>
+      <span class="date" id="cur-date"></span>
     </div>
-    <div class="cmd-note" id="cmd-note"></div>
+    <button class="open-btn" onclick="openCurrent()">open download</button>
+  </div>
+  <div class="status loading" id="cur-status"><span class="spinner"></span>fetching current version...</div>
+
+  <div class="divider"></div>
+
+  <div class="section-label">by executor</div>
+  <div class="status loading" id="list-status"><span class="spinner"></span>fetching executor list...</div>
+  <div class="executor-list" id="list"></div>
+
+  <div class="divider"></div>
+
+  <div class="section-label">custom version hash</div>
+  <div class="custom-row">
+    <input class="custom-input" id="custom-input" placeholder="version-6776addb8fbc4d17" spellcheck="false" />
+    <button class="go-btn" onclick="goCustom()">open</button>
   </div>
 </div>
+<div class="toast" id="toast"></div>
 <script>
-const API_URLS = ['/api/executors'];
-let executors = [];
+  let currentVersion = null;
 
-async function fetchExecutors() {
-  try {
-    const r = await fetch('/api/executors');
-    if (!r.ok) return null;
-    const data = await r.json();
-    return data.filter(e =>
-      e.platform === 'Windows' &&
-      e.rbxversion && e.rbxversion.match(/^version-/) &&
-      e.extype === 'wexecutor'
-    );
-  } catch(e) { return null; }
-}
-
-function renderList() {
-  const list = document.getElementById('list');
-  list.innerHTML = '';
-  executors.forEach((ex, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'executor-item';
-    btn.innerHTML = `<span class="idx">${i+1}</span><span class="name">${ex.title.trim()}</span><span class="version">${ex.rbxversion.trim()}</span>`;
-    btn.onclick = () => selectExecutor(i);
-    list.appendChild(btn);
-  });
-}
-
-function selectExecutor(i) {
-  document.querySelectorAll('.executor-item').forEach((el, idx) => {
-    el.classList.toggle('selected', idx === i);
-  });
-  const ex = executors[i];
-  const ver = ex.rbxversion.trim();
-  const url = `https://rdd.latte.to/?channel=LIVE&binaryType=WindowsPlayer&version=${ver}`;
-  document.getElementById('cmd-text').textContent = url;
-  document.getElementById('cmd-note').textContent =
-    `open this url in your browser to download the roblox zip for ${ex.title.trim()} (${ver}), then run the downgrade script`;
-  document.getElementById('cmd-section').style.display = '';
-}
-
-function copyCmd() {
-  const text = document.getElementById('cmd-text').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.getElementById('copy-btn');
-    btn.textContent = 'copied';
-    setTimeout(() => btn.textContent = 'copy', 1500);
-  });
-}
-
-(async () => {
-  const data = await fetchExecutors();
-  const status = document.getElementById('status');
-  if (!data || data.length === 0) {
-    status.className = 'status error';
-    status.textContent = 'failed to fetch executor list. check your connection or try again.';
-    return;
+  function makeUrl(version) {
+    return `https://rdd.latte.to/?channel=LIVE&binaryType=WindowsPlayer&version=${version.trim()}`;
   }
-  executors = data;
-  status.className = 'status';
-  status.textContent = `${executors.length} executors available — select one below`;
-  renderList();
-})();
-</script>
+  function go(version) { window.open(makeUrl(version), '_blank'); }
+  function openCurrent() { if (currentVersion) go(currentVersion); }
 
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  async function loadCurrent() {
+    try {
+      const r = await fetch('/api/current');
+      if (!r.ok) throw new Error();
+      const data = await r.json();
+      currentVersion = data.Windows;
+      document.getElementById('cur-ver').textContent = data.Windows;
+      document.getElementById('cur-date').textContent = 'updated ' + data.WindowsDate;
+      document.getElementById('cur-status').style.display = 'none';
+      document.getElementById('current-card').style.display = 'flex';
+    } catch(e) {
+      const s = document.getElementById('cur-status');
+      s.className = 'status error';
+      s.textContent = 'failed to fetch current version.';
+    }
+  }
+
+  async function loadExecutors() {
+    try {
+      const r = await fetch('/api/executors');
+      if (!r.ok) throw new Error();
+      const data = await r.json();
+      const filtered = data.filter(e =>
+        e.platform === 'Windows' &&
+        e.rbxversion && e.rbxversion.match(/^version-/) &&
+        e.extype === 'wexecutor'
+      );
+      const list = document.getElementById('list');
+      const s = document.getElementById('list-status');
+      if (!filtered.length) { s.className = 'status error'; s.textContent = 'no executors found.'; return; }
+      s.className = 'status';
+      s.textContent = `${filtered.length} executors available`;
+      filtered.forEach((ex, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'executor-item';
+        btn.innerHTML = `<span class="idx">${i+1}</span><span class="name">${ex.title.trim()}</span><span class="version">${ex.rbxversion.trim()}</span>`;
+        btn.onclick = () => go(ex.rbxversion);
+        list.appendChild(btn);
+      });
+    } catch(e) {
+      const s = document.getElementById('list-status');
+      s.className = 'status error';
+      s.textContent = 'failed to fetch executor list.';
+    }
+  }
+
+  function goCustom() {
+    const val = document.getElementById('custom-input').value.trim();
+    if (!val) { showToast('enter a version hash'); return; }
+    const version = val.startsWith('version-') ? val : 'version-' + val;
+    go(version);
+  }
+
+  document.getElementById('custom-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') goCustom();
+  });
+
+  loadCurrent();
+  loadExecutors();
+</script>
 </body>
 </html>
